@@ -1,0 +1,30 @@
+yaml
+
+name: Build Phantom.kext
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-13  # Xcode 15.2
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Init submodules
+        run: git submodule update --init --recursive
+
+      - name: Build Kext
+        run: |
+          xcodebuild -project Phantom.xcodeproj -scheme Phantom -configuration Release build
+
+      - name: Upload Kext
+        uses: actions/upload-artifact@v4
+        with:
+          name: Phantom.kext
+          path: build/Release/Phantom.kext
+
